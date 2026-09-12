@@ -1,17 +1,87 @@
-let balance = 3500000;
+// =============================
+// DEMO PAYMENT SIMULATOR
+// =============================
 
-function formatMoney(amount) {
-  return "₹" + amount.toLocaleString("en-IN");
+let balance = 2500000;
+
+// Demo PIN only
+const DEMO_PIN = "1234";
+
+
+// =============================
+// LOGIN
+// =============================
+
+function login() {
+
+  const pin = document.getElementById("pinInput").value;
+
+  if (pin === DEMO_PIN) {
+
+    document.getElementById("loginPage")
+      .classList.add("hidden");
+
+    document.getElementById("mainPage")
+      .classList.remove("hidden");
+
+    updateBalance();
+    loadHistory();
+
+  } else {
+
+    alert("गलत Demo PIN!\nDemo PIN: 1234");
+
+  }
 }
+
+
+// =============================
+// LOGOUT
+// =============================
+
+function logout() {
+
+  document.getElementById("mainPage")
+    .classList.add("hidden");
+
+  document.getElementById("loginPage")
+    .classList.remove("hidden");
+
+  document.getElementById("pinInput").value = "";
+
+  closeProfile();
+}
+
+
+// =============================
+// BALANCE
+// =============================
+
+function formatMoney(number) {
+
+  return "₹" + Number(number).toLocaleString("en-IN");
+
+}
+
 
 function updateBalance() {
-  document.getElementById("balance").innerText = formatMoney(balance);
+
+  document.getElementById("balance")
+    .innerText = formatMoney(balance);
+
 }
 
-function addMoney() {
+
+// =============================
+// ADD DEMO MONEY
+// =============================
+
+function addDemoMoney() {
+
   const amount = 500000;
 
   balance += amount;
+
   updateBalance();
 
   addTransaction(
@@ -19,113 +89,303 @@ function addMoney() {
     amount,
     "received"
   );
+
 }
 
-function openPay() {
-  document.getElementById("payModal").style.display = "flex";
+
+// =============================
+// PAYMENT
+// =============================
+
+function openPayment() {
+
+  document.getElementById("paymentModal")
+    .style.display = "flex";
+
 }
 
-function closePay() {
-  document.getElementById("payModal").style.display = "none";
+
+function closePayment() {
+
+  document.getElementById("paymentModal")
+    .style.display = "none";
+
 }
 
-function makePayment() {
 
-  const name = document.getElementById("name").value.trim();
-  const amount = Number(
-    document.getElementById("amount").value
-  );
+function sendPayment() {
 
-  if (!name) {
-    alert("Receiver name डालें");
+  const phone =
+    document.getElementById("phoneInput").value.trim();
+
+  const amount =
+    Number(document.getElementById("amountInput").value);
+
+
+  // Check number
+
+  if (!/^[0-9]{10}$/.test(phone)) {
+
+    alert("10 digit mobile number डालें।");
     return;
+
   }
+
+
+  // Check amount
 
   if (!amount || amount <= 0) {
-    alert("Valid amount डालें");
+
+    alert("Valid amount डालें।");
     return;
+
   }
+
+
+  // Check balance
 
   if (amount > balance) {
-    alert("Demo balance कम है");
+
+    alert("Demo balance कम है।");
     return;
+
   }
 
+
+  // Deduct demo balance
+
   balance -= amount;
+
   updateBalance();
 
+
+  // Add history
+
   addTransaction(
-    "Paid to " + name,
+    "Demo Payment",
     amount,
-    "sent"
+    "sent",
+    phone
   );
 
-  closePay();
 
-  document.getElementById("successText").innerText =
+  // Success message
+
+  document.getElementById("successMessage")
+    .innerText =
     formatMoney(amount) +
-    " का DEMO payment " +
-    name +
-    " को भेजा गया।";
+    " का Demo Payment\n" +
+    "Mobile: " +
+    phone;
 
-  document.getElementById("successModal").style.display = "flex";
 
-  document.getElementById("name").value = "";
-  document.getElementById("amount").value = "";
+  closePayment();
+
+  document.getElementById("successModal")
+    .style.display = "flex";
+
+
+  // Clear inputs
+
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("amountInput").value = "";
+
 }
+
+
+// =============================
+// TRANSACTION HISTORY
+// =============================
+
+function addTransaction(
+  title,
+  amount,
+  type,
+  phone = ""
+) {
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("demoHistory") || "[]"
+    );
+
+
+  const transaction = {
+
+    title: title,
+
+    amount: amount,
+
+    type: type,
+
+    phone: phone,
+
+    time: new Date().toLocaleString("en-IN")
+
+  };
+
+
+  history.unshift(transaction);
+
+
+  localStorage.setItem(
+    "demoHistory",
+    JSON.stringify(history)
+  );
+
+
+  loadHistory();
+
+}
+
+
+function loadHistory() {
+
+  const list =
+    document.getElementById("historyList");
+
+  const history =
+    JSON.parse(
+      localStorage.getItem("demoHistory") || "[]"
+    );
+
+
+  list.innerHTML = "";
+
+
+  if (history.length === 0) {
+
+    list.innerHTML =
+      `<div class="empty">
+        अभी कोई Demo Transaction नहीं है
+      </div>`;
+
+    return;
+
+  }
+
+
+  history.forEach(transaction => {
+
+    const isReceived =
+      transaction.type === "received";
+
+
+    const icon =
+      isReceived ? "↓" : "↑";
+
+
+    const sign =
+      isReceived ? "+" : "-";
+
+
+    const color =
+      isReceived ? "green" : "red";
+
+
+    let subtitle =
+      transaction.time +
+      " • DEMO";
+
+
+    if (transaction.phone) {
+
+      subtitle +=
+        " • " +
+        transaction.phone;
+
+    }
+
+
+    const div =
+      document.createElement("div");
+
+
+    div.className = "transaction";
+
+
+    div.innerHTML = `
+
+      <div class="transaction-icon ${transaction.type}">
+        ${icon}
+      </div>
+
+      <div class="transaction-info">
+
+        <b>${transaction.title}</b>
+
+        <small>${subtitle}</small>
+
+      </div>
+
+      <div class="amount ${color}">
+        ${sign} ${formatMoney(transaction.amount)}
+      </div>
+
+    `;
+
+
+    list.appendChild(div);
+
+  });
+
+}
+
+
+// =============================
+// CLEAR HISTORY
+// =============================
+
+function clearHistory() {
+
+  if (
+    confirm("क्या Demo transaction history हटानी है?")
+  ) {
+
+    localStorage.removeItem("demoHistory");
+
+    loadHistory();
+
+  }
+
+}
+
+
+// =============================
+// SUCCESS
+// =============================
 
 function closeSuccess() {
-  document.getElementById("successModal").style.display = "none";
+
+  document.getElementById("successModal")
+    .style.display = "none";
+
 }
 
-function addTransaction(title, amount, type) {
 
-  const list = document.getElementById("transactionList");
+// =============================
+// PROFILE
+// =============================
 
-  const div = document.createElement("div");
+function showProfile() {
 
-  div.className = "transaction";
+  document.getElementById("profileModal")
+    .style.display = "flex";
 
-  const iconClass =
-    type === "received" ? "received" : "sent";
-
-  const icon =
-    type === "received" ? "↓" : "↑";
-
-  const sign =
-    type === "received" ? "+" : "-";
-
-  const color =
-    type === "received" ? "green" : "red";
-
-  div.innerHTML = `
-    <div class="icon ${iconClass}">
-      ${icon}
-    </div>
-
-    <div class="details">
-      <b>${title}</b>
-      <small>Just now • DEMO</small>
-    </div>
-
-    <strong class="${color}">
-      ${sign} ${formatMoney(amount)}
-    </strong>
-  `;
-
-  list.prepend(div);
 }
 
-function clearTransactions() {
-  document.getElementById("transactionList").innerHTML = "";
+
+function closeProfile() {
+
+  document.getElementById("profileModal")
+    .style.display = "none";
+
 }
 
-function showInfo() {
-  alert(
-    "यह एक Fake Payment Simulator है।\n\n" +
-    "इसमें दिखाया गया balance और सभी transactions काल्पनिक हैं।\n" +
-    "इसका किसी bank, UPI या वास्तविक payment system से connection नहीं है।"
-  );
-}
+
+// =============================
+// START
+// =============================
 
 updateBalance();
+loadHistory();
