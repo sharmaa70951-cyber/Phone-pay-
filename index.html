@@ -3,73 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My First Website</title>
+  <title>PayDemo - Fake Payment Simulator</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <header class="navbar">
-    <div class="logo">MY<span>WEB</span></div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <div class="app">
 
-  <main>
-    <section id="home" class="hero">
-      <div class="hero-content">
-        <p class="tag">WELCOME TO MY WEBSITE</p>
-        <h1>अपनी <span>पहली वेबसाइट</span> में आपका स्वागत है</h1>
-        <p class="subtitle">
-          यह एक modern, responsive और mobile-friendly वेबसाइट है।
-          इसे आप अपनी पसंद के हिसाब से बदल सकते हैं।
-        </p>
-        <a class="btn" href="#about">शुरू करें</a>
+    <header>
+      <div>
+        <h1>PayDemo</h1>
+        <span>FAKE • DEMO ONLY</span>
+      </div>
+      <div class="profile">A</div>
+    </header>
+
+    <div class="warning">
+      ⚠️ DEMO / PRANK — यह वास्तविक पैसा या payment नहीं है
+    </div>
+
+    <section class="balance-card">
+      <p>Demo Balance</p>
+      <h2 id="balance">₹35,00,000</h2>
+
+      <div class="buttons">
+        <button onclick="addMoney()">＋ Add Demo Money</button>
+        <button onclick="openPay()">Pay</button>
       </div>
     </section>
 
-    <section id="about" class="section">
-      <h2>मेरे बारे में</h2>
-      <p>
-        यह आपकी पहली वेबसाइट का About section है।
-        यहाँ आप अपने बारे में, अपने काम या अपने brand के बारे में लिख सकते हैं।
-      </p>
+    <section class="quick">
+      <button onclick="openPay()">💸 Pay</button>
+      <button onclick="addMoney()">💰 Add</button>
+      <button onclick="showInfo()">ℹ️ Info</button>
     </section>
 
-    <section id="services" class="section">
-      <h2>हम क्या करते हैं?</h2>
-      <div class="cards">
-        <div class="card">
-          <div class="icon">💻</div>
-          <h3>Web Design</h3>
-          <p>Simple और attractive वेबसाइट design.</p>
-        </div>
-        <div class="card">
-          <div class="icon">📱</div>
-          <h3>Mobile Friendly</h3>
-          <p>मोबाइल और कंप्यूटर दोनों पर responsive design.</p>
-        </div>
-        <div class="card">
-          <div class="icon">⚡</div>
-          <h3>Fast Website</h3>
-          <p>हल्की और जल्दी load होने वाली वेबसाइट.</p>
+    <section class="transactions">
+      <div class="title-row">
+        <h2>Demo Transactions</h2>
+        <button onclick="clearTransactions()">Clear</button>
+      </div>
+
+      <div id="transactionList">
+        <div class="transaction">
+          <div class="icon received">↓</div>
+          <div class="details">
+            <b>Demo Money</b>
+            <small>Today • DEMO</small>
+          </div>
+          <strong class="green">+ ₹35,00,000</strong>
         </div>
       </div>
     </section>
 
-    <section id="contact" class="section contact">
-      <h2>Contact</h2>
-      <p>नीचे अपना email या social media link डाल सकते हैं।</p>
-      <a class="btn" href="mailto:youremail@example.com">Email करें</a>
-    </section>
-  </main>
+    <footer>
+      <p>🔒 This is a fictional payment simulator.</p>
+      <p>NO REAL MONEY • NO REAL UPI • NO BANK CONNECTION</p>
+    </footer>
 
-  <footer>
-    <p>© 2026 My Web. All Rights Reserved.</p>
-  </footer>
+  </div>
+
+  <!-- Payment Popup -->
+  <div class="modal" id="payModal">
+    <div class="modal-box">
+      <button class="close" onclick="closePay()">×</button>
+
+      <h2>Demo Payment</h2>
+
+      <input id="name" type="text" placeholder="Receiver name">
+      <input id="amount" type="number" placeholder="Amount ₹">
+
+      <button class="pay-btn" onclick="makePayment()">
+        Send Demo Payment
+      </button>
+
+      <p class="demo-text">DEMO ONLY — No real payment will happen.</p>
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div class="modal" id="successModal">
+    <div class="success-box">
+      <div class="check">✓</div>
+      <h2>Demo Payment Successful</h2>
+      <p id="successText"></p>
+      <button onclick="closeSuccess()">OK</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 
 </body>
 </html>
