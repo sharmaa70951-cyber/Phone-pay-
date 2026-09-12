@@ -3,96 +3,186 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PayDemo - Fake Payment Simulator</title>
+  <title>PayDemo - Demo Wallet</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <div class="app">
+<div class="app">
+
+  <!-- LOGIN -->
+  <section id="loginPage" class="login-page">
+    <div class="logo">P</div>
+    <h1>PayDemo</h1>
+    <p class="subtitle">Demo Wallet Simulator</p>
+
+    <div class="demo-warning">
+      ⚠️ DEMO ONLY<br>
+      यह वास्तविक बैंक खाता या UPI नहीं है।
+    </div>
+
+    <input id="pinInput" type="password"
+           maxlength="4"
+           inputmode="numeric"
+           placeholder="Demo PIN डालें">
+
+    <button class="primary-btn" onclick="login()">
+      Login
+    </button>
+
+    <p class="hint">Demo PIN: <b>1234</b></p>
+  </section>
+
+
+  <!-- MAIN APP -->
+  <section id="mainPage" class="hidden">
 
     <header>
       <div>
-        <h1>PayDemo</h1>
-        <span>FAKE • DEMO ONLY</span>
+        <h2>PayDemo</h2>
+        <small>DEMO ACCOUNT</small>
       </div>
-      <div class="profile">A</div>
+
+      <button class="profile" onclick="showProfile()">A</button>
     </header>
 
-    <div class="warning">
-      ⚠️ DEMO / PRANK — यह वास्तविक पैसा या payment नहीं है
+    <div class="demo-bar">
+      ⚠️ DEMO / PRANK — REAL MONEY नहीं
     </div>
 
-    <section class="balance-card">
-      <p>Demo Balance</p>
-      <h2 id="balance">₹35,00,000</h2>
+    <!-- BALANCE -->
+    <div class="balance-card">
+      <p>Demo Bank Balance</p>
+      <h1 id="balance">₹25,00,000</h1>
 
-      <div class="buttons">
-        <button onclick="addMoney()">＋ Add Demo Money</button>
-        <button onclick="openPay()">Pay</button>
+      <div class="account">
+        <span>Demo Account</span>
+        <span>•••• 1234</span>
       </div>
-    </section>
+    </div>
 
-    <section class="quick">
-      <button onclick="openPay()">💸 Pay</button>
-      <button onclick="addMoney()">💰 Add</button>
-      <button onclick="showInfo()">ℹ️ Info</button>
-    </section>
 
-    <section class="transactions">
-      <div class="title-row">
-        <h2>Demo Transactions</h2>
-        <button onclick="clearTransactions()">Clear</button>
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+
+      <button onclick="openPayment()">
+        <span>💸</span>
+        <b>Pay</b>
+      </button>
+
+      <button onclick="addDemoMoney()">
+        <span>💰</span>
+        <b>Add Money</b>
+      </button>
+
+      <button onclick="showProfile()">
+        <span>👤</span>
+        <b>Profile</b>
+      </button>
+
+    </div>
+
+
+    <!-- HISTORY -->
+    <div class="history">
+
+      <div class="history-head">
+        <h2>Transaction History</h2>
+        <button onclick="clearHistory()">Clear</button>
       </div>
 
-      <div id="transactionList">
-        <div class="transaction">
-          <div class="icon received">↓</div>
-          <div class="details">
-            <b>Demo Money</b>
-            <small>Today • DEMO</small>
-          </div>
-          <strong class="green">+ ₹35,00,000</strong>
-        </div>
-      </div>
-    </section>
+      <div id="historyList"></div>
+
+    </div>
+
 
     <footer>
-      <p>🔒 This is a fictional payment simulator.</p>
-      <p>NO REAL MONEY • NO REAL UPI • NO BANK CONNECTION</p>
+      <b>PAYDEMO</b><br>
+      Fictional demo wallet • No real banking connection
     </footer>
 
-  </div>
+  </section>
 
-  <!-- Payment Popup -->
-  <div class="modal" id="payModal">
+
+  <!-- PAYMENT POPUP -->
+  <div id="paymentModal" class="modal">
+
     <div class="modal-box">
-      <button class="close" onclick="closePay()">×</button>
 
-      <h2>Demo Payment</h2>
+      <button class="close" onclick="closePayment()">×</button>
 
-      <input id="name" type="text" placeholder="Receiver name">
-      <input id="amount" type="number" placeholder="Amount ₹">
+      <h2>Send Demo Money</h2>
+      <p class="modal-note">
+        यह payment केवल demo है।
+      </p>
 
-      <button class="pay-btn" onclick="makePayment()">
+      <label>Mobile Number</label>
+
+      <input id="phoneInput"
+             type="tel"
+             maxlength="10"
+             inputmode="numeric"
+             placeholder="10 digit number">
+
+      <label>Amount</label>
+
+      <input id="amountInput"
+             type="number"
+             placeholder="₹ Amount">
+
+      <button class="primary-btn" onclick="sendPayment()">
         Send Demo Payment
       </button>
 
-      <p class="demo-text">DEMO ONLY — No real payment will happen.</p>
     </div>
+
   </div>
 
-  <!-- Success Popup -->
-  <div class="modal" id="successModal">
+
+  <!-- SUCCESS POPUP -->
+  <div id="successModal" class="modal">
+
     <div class="success-box">
-      <div class="check">✓</div>
+
+      <div class="success-icon">✓</div>
+
       <h2>Demo Payment Successful</h2>
-      <p id="successText"></p>
-      <button onclick="closeSuccess()">OK</button>
+
+      <p id="successMessage"></p>
+
+      <button class="primary-btn" onclick="closeSuccess()">
+        Done
+      </button>
+
     </div>
+
   </div>
 
-  <script src="script.js"></script>
 
+  <!-- PROFILE POPUP -->
+  <div id="profileModal" class="modal">
+
+    <div class="modal-box">
+
+      <button class="close" onclick="closeProfile()">×</button>
+
+      <div class="big-profile">A</div>
+
+      <h2>Demo User</h2>
+
+      <p>Demo Bank Account</p>
+      <p>Account •••• 1234</p>
+
+      <button class="logout-btn" onclick="logout()">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
